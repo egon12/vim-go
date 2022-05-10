@@ -2,6 +2,9 @@
 let s:cpo_save = &cpo
 set cpo&vim
 
+" to store last test
+let s:go_last_test = []
+
 " Test runs `go test` in the current directory. If compile is true, it'll
 " compile the tests instead of running them (useful to catch errors in the
 " test files). Any other argument is appended to the final `go test` command.
@@ -118,6 +121,16 @@ function! go#test#Func(bang, ...) abort
     let timeout = go#config#TestTimeout()
     call add(args, printf("-timeout=%s", timeout))
   endif
+
+  let s:go_last_test = args
+
+  call call('go#test#Test', args)
+endfunction
+
+" RunLastTest runs a single test that that run after args
+" Arguments are passed to the `go test` command.
+function! go#test#Last(bang, ...) abort
+  let args = s:go_last_test
 
   call call('go#test#Test', args)
 endfunction
